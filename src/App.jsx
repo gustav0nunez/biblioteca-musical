@@ -2,6 +2,9 @@ import { useState } from "react";
 import NavBar from "./componets/Navbar";
 import Lista from "./componets/Lista";
 import Detalle from "./componets/Detalle";
+import { Container } from "react-bootstrap";
+
+
 
 import { buscarAlbumes, obtenerInfoAlbum } from "./Axios/services/albumService";
 import { buscarArtistas, obtenerTopCancionesArtista, obtenerArtistasSimilares } from "./Axios/services/artistaService";
@@ -13,6 +16,7 @@ function App() {
   const [datos, setDatos] = useState([]);
   const [detalle, setDetalle] = useState(null);
   const [similares, setSimilares] = useState([]);
+  const [seleccionado, setSeleccionado] = useState(null);
 
 
   const funcionesDeBusqueda = {
@@ -38,6 +42,7 @@ function App() {
   };
 
   const verDetalle = async (resultado) => {
+    setSeleccionado(resultado);
     const detalle = await funcionesDetalle[tipoBusqueda]?.(resultado);
     setDetalle(detalle);
 
@@ -45,24 +50,23 @@ function App() {
       setSimilares(similar || []);
   };
 
-  return (
-    <>
-      <div>
-        <h1>Bibloteca de Musica</h1>
-        <NavBar setTipoBusqueda={setTipoBusqueda} texto={texto} setTexto={setTexto} buscar={buscarTipo}
-        />
+   return (
+    <div className="bg-dark min-vh-100 text-light py-4">
+      <Container>
+        <NavBar setTipoBusqueda={setTipoBusqueda} texto={texto} setTexto={setTexto} buscar={buscarTipo} />
 
-        <h2> {tipoBusqueda && texto
-          ? `Búsqueda de ${tipoBusqueda}: "${texto}"`
-          : "Realizá una búsqueda"}
+        <h2 className="text-center my-4 text-info">
+          {tipoBusqueda && texto
+            ? `Búsqueda de ${tipoBusqueda}: "${texto}"`
+            : "Realizá una búsqueda"}
         </h2>
 
         <Lista datos={datos} tipoBusqueda={tipoBusqueda} accion={verDetalle} />
 
-        <Detalle detalle={detalle} tipoBusqueda={tipoBusqueda} similares={similares}/>
-      </div>
-    </>
+        <Detalle detalle={detalle} tipoBusqueda={tipoBusqueda} similares={similares} seleccionado={seleccionado} />
+      </Container>
+    </div>
   );
 }
 
-export default App;
+export default App; 
